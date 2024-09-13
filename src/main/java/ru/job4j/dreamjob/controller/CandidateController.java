@@ -7,6 +7,7 @@ import ru.job4j.dreamjob.model.Candidate;
 import ru.job4j.dreamjob.repository.CandidateRepository;
 import ru.job4j.dreamjob.repository.MemoryCandidateRepository;
 import ru.job4j.dreamjob.service.CandidateService;
+import ru.job4j.dreamjob.service.CityService;
 import ru.job4j.dreamjob.service.SimpleCandidateService;
 
 @Controller
@@ -15,8 +16,11 @@ public class CandidateController {
 
     private final CandidateService candidateService;
 
-    public CandidateController(CandidateService candidateService) {
+    private final CityService cityService;
+
+    public CandidateController(CandidateService candidateService, CityService cityService) {
         this.candidateService = candidateService;
+        this.cityService = cityService;
     }
 
     @GetMapping
@@ -26,7 +30,8 @@ public class CandidateController {
     }
 
     @GetMapping("/create")
-    public String getCreationPage() {
+    public String getCreationPage(Model model) {
+        model.addAttribute("cities", cityService.findAll());
         return "candidates/create";
     }
 
@@ -37,6 +42,7 @@ public class CandidateController {
             model.addAttribute("message", "Кандидата с указанным идентификатором не найдена");
             return "errors/404";
         }
+        model.addAttribute("cities", cityService.findAll());
         model.addAttribute("candidate", candidateOptional.get());
         return "candidates/one";
     }
