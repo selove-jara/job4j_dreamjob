@@ -20,12 +20,12 @@ public class MemoryVacancyRepository implements VacancyRepository {
     private final Map<Integer, Vacancy> vacancies = new ConcurrentHashMap<>();
 
     private MemoryVacancyRepository() {
-        save(new Vacancy(0, "Intern Java Developer", "В поиске Intern", LocalDateTime.now(), false, 1));
-        save(new Vacancy(0, "Junior Java Developer", "В поиске Junior", LocalDateTime.of(2024, 8, 30, 0, 0), true, 1));
-        save(new Vacancy(0, "Junior+ Java Developer", "В поиске Junior+", LocalDateTime.now(), false, 3));
-        save(new Vacancy(0, "Middle Java Developer", "В поиске Middle", LocalDateTime.of(2024, 8, 27, 0, 0), true, 1));
-        save(new Vacancy(0, "Middle+ Java Developer", "В поиске Middle+", LocalDateTime.now(), true, 2));
-        save(new Vacancy(0, "Senior Java Developer", "В поиске Senior", LocalDateTime.of(2024, 9, 9, 0, 0), true, 1));
+        save(new Vacancy(0, "Intern Java Developer", "В поиске Intern", LocalDateTime.now(), false, 1, 0));
+        save(new Vacancy(0, "Junior Java Developer", "В поиске Junior", LocalDateTime.of(2024, 8, 30, 0, 0), true, 1, 0));
+        save(new Vacancy(0, "Junior+ Java Developer", "В поиске Junior+", LocalDateTime.now(), false, 3, 0));
+        save(new Vacancy(0, "Middle Java Developer", "В поиске Middle", LocalDateTime.of(2024, 8, 27, 0, 0), true, 1, 0));
+        save(new Vacancy(0, "Middle+ Java Developer", "В поиске Middle+", LocalDateTime.now(), true, 2, 0));
+        save(new Vacancy(0, "Senior Java Developer", "В поиске Senior", LocalDateTime.of(2024, 9, 9, 0, 0), true, 1, 0));
     }
 
     @Override
@@ -36,8 +36,8 @@ public class MemoryVacancyRepository implements VacancyRepository {
     }
 
     @Override
-    public boolean deleteById(int id) {
-        return vacancies.remove(id) != null;
+    public void deleteById(int id) {
+        vacancies.remove(id);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MemoryVacancyRepository implements VacancyRepository {
         return vacancies.computeIfPresent(vacancy.getId(), (id, oldVacancy) -> {
             return new Vacancy(
                     oldVacancy.getId(), vacancy.getTitle(), vacancy.getDescription(),
-                    vacancy.getCreationDate(), vacancy.getVisible(), vacancy.getCityId()
+                    vacancy.getCreationDate(), vacancy.getVisible(), vacancy.getCityId(), vacancy.getFileId()
             );
         }) != null;
     }

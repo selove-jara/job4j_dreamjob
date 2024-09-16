@@ -3,12 +3,11 @@ package ru.job4j.dreamjob.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
-import ru.job4j.dreamjob.repository.CandidateRepository;
-import ru.job4j.dreamjob.repository.MemoryCandidateRepository;
 import ru.job4j.dreamjob.service.CandidateService;
 import ru.job4j.dreamjob.service.CityService;
-import ru.job4j.dreamjob.service.SimpleCandidateService;
 
 @Controller
 @RequestMapping("/candidates")
@@ -48,22 +47,28 @@ public class CandidateController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Candidate candidate, Model model) {
-        var isUpdated = candidateService.update(candidate);
-        if (!isUpdated) {
-            model.addAttribute("message", "Кандидата с указанным идентификатором не найдена");
+    public String update(@ModelAttribute Candidate vacancy, @RequestParam MultipartFile file, Model model) {
+        try {
+            var isUpdated = candidateService.update(vacancy, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            if (!isUpdated) {
+                model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
+                return "errors/404";
+            }
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
-        return "redirect:/candidates";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        var isDeleted = candidateService.deleteById(id);
-        if (!isDeleted) {
+        try {
+            candidateService.deleteById(id);
+            return "redirect:/candidates";
+        } catch (Exception e) {
             model.addAttribute("message", "Кандидата с указанным идентификатором не найдена");
             return "errors/404";
         }
-        return "redirect:/candidates";
     }
 }
