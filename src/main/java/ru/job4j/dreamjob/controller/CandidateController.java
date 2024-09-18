@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.dreamjob.dto.FileDto;
 import ru.job4j.dreamjob.model.Candidate;
+import ru.job4j.dreamjob.model.Vacancy;
 import ru.job4j.dreamjob.service.CandidateService;
 import ru.job4j.dreamjob.service.CityService;
+import ru.job4j.dreamjob.service.FileService;
 
 @Controller
 @RequestMapping("/candidates")
@@ -46,12 +48,23 @@ public class CandidateController {
         return "candidates/one";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute Candidate vacancy, @RequestParam MultipartFile file, Model model) {
+    @PostMapping("/create")
+    public String create(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
         try {
-            var isUpdated = candidateService.update(vacancy, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            candidateService.save(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
+            return "redirect:/candidates";
+        } catch (Exception exception) {
+            model.addAttribute("message", exception.getMessage());
+            return "errors/404";
+        }
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Candidate candidate, @RequestParam MultipartFile file, Model model) {
+        try {
+            var isUpdated = candidateService.update(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
             if (!isUpdated) {
-                model.addAttribute("message", "Вакансия с указанным идентификатором не найдена");
+                model.addAttribute("message", "Кандидат с указанным идентификатором не найдена");
                 return "errors/404";
             }
             return "redirect:/candidates";
