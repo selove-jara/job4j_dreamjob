@@ -19,13 +19,13 @@ public class SimpleFileService implements FileService {
 
     private final String storageDirectory;
 
-    public SimpleFileService(FileRepository fileRepository,
+    public SimpleFileService(FileRepository sql2oFileRepository,
                              @Value("${file.directory}") String storageDirectory) {
-        this.fileRepository = fileRepository;
+        this.fileRepository = sql2oFileRepository;
         this.storageDirectory = storageDirectory;
         createStorageDirectory(storageDirectory);
     }
-
+    
     private void createStorageDirectory(String path) {
         try {
             Files.createDirectories(Path.of(path));
