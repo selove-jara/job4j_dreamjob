@@ -10,9 +10,8 @@ import ru.job4j.dreamjob.model.User;
 import ru.job4j.dreamjob.service.UserService;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
-
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -20,7 +19,7 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String getRegistationPage(Model model) {
+    public String getRegistrationPage(Model model) {
         model.addAttribute("user", new User());
         return "users/register";
     }
@@ -34,5 +33,20 @@ public class UserController {
             model.addAttribute("message", exception.getMessage());
             return "errors/404";
         }
+    }
+
+    @GetMapping("/login")
+    public String getLoginPage() {
+        return "users/login";
+    }
+
+    @PostMapping("/login")
+    public String loginUser(@ModelAttribute User user, Model model) {
+        var userOptional = userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (userOptional.isEmpty()) {
+            model.addAttribute("error", "Почта или пароль введены неверно");
+            return "users/login";
+        }
+        return "redirect:/vacancies";
     }
 }
