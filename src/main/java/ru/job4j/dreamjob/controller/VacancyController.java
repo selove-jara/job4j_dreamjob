@@ -26,16 +26,6 @@ public class VacancyController {
         this.cityService = cityService;
     }
 
-    @ModelAttribute
-    public void addUserToModel(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName("Гость");
-        }
-        model.addAttribute("user", user);
-    }
-
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("vacancies", vacancyService.findAll());

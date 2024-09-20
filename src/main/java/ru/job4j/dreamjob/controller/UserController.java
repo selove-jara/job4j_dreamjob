@@ -21,16 +21,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @ModelAttribute
-    public void addUserToModel(Model model, HttpSession session) {
-        var user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User();
-            user.setName("Гость");
-        }
-        model.addAttribute("user", user);
-    }
-
     @GetMapping("/register")
     public String getRegistrationPage(Model model) {
         model.addAttribute("user", new User());
