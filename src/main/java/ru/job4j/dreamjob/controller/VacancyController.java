@@ -5,10 +5,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.dreamjob.dto.FileDto;
+import ru.job4j.dreamjob.model.User;
 import ru.job4j.dreamjob.model.Vacancy;
 import ru.job4j.dreamjob.service.FileService;
 import ru.job4j.dreamjob.service.VacancyService;
 import ru.job4j.dreamjob.service.CityService;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/vacancies") /* Работать с кандидатами будем по URI /vacancies/** */
@@ -21,6 +24,16 @@ public class VacancyController {
     public VacancyController(VacancyService vacancyService, CityService cityService, FileService fileService) {
         this.vacancyService = vacancyService;
         this.cityService = cityService;
+    }
+
+    @ModelAttribute
+    public void addUserToModel(Model model, HttpSession session) {
+        var user = (User) session.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setName("Гость");
+        }
+        model.addAttribute("user", user);
     }
 
     @GetMapping
